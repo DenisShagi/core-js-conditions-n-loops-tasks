@@ -358,8 +358,50 @@ function getBalanceIndex(arr) {
  *          [10, 9,  8,  7]
  *        ]
  */
-function getSpiralMatrix(/* size */) {
-  throw new Error('Not implemented');
+function getSpiralMatrix(size) {
+  if (size < 1) return [];
+
+  const matrix = [];
+  for (let i = 0; i < size; i += 1) {
+    matrix[i] = [];
+    for (let j = 0; j < size; j += 1) {
+      matrix[i][j] = 0;
+    }
+  }
+
+  let counter = 1;
+  let minCol = 0;
+  let maxCol = size - 1;
+  let minRow = 0;
+  let maxRow = size - 1;
+
+  while (minCol <= maxCol && minRow <= maxRow) {
+    for (let col = minCol; col <= maxCol; col += 1) {
+      matrix[minRow][col] = counter;
+      counter += 1;
+    }
+    minRow += 1;
+
+    for (let row = minRow; row <= maxRow; row += 1) {
+      matrix[row][maxCol] = counter;
+      counter += 1;
+    }
+    maxCol -= 1;
+
+    for (let col = maxCol; col >= minCol; col -= 1) {
+      matrix[maxRow][col] = counter;
+      counter += 1;
+    }
+    maxRow -= 1;
+
+    for (let row = maxRow; row >= minRow; row -= 1) {
+      matrix[row][minCol] = counter;
+      counter += 1;
+    }
+    minCol += 1;
+  }
+
+  return matrix;
 }
 
 /**
@@ -377,8 +419,29 @@ function getSpiralMatrix(/* size */) {
  *    [7, 8, 9]         [9, 6, 3]
  *  ]                 ]
  */
-function rotateMatrix(/* matrix */) {
-  throw new Error('Not implemented');
+function rotateMatrix(matrix) {
+  const size = matrix.length;
+
+  for (let layerIndex = 0; layerIndex < Math.floor(size / 2); layerIndex += 1) {
+    const start = layerIndex;
+    const end = size - 1 - layerIndex;
+
+    for (let pos = start; pos < end; pos += 1) {
+      const shift = pos - start;
+
+      const temp = matrix[start][pos];
+      const copyM = matrix;
+      copyM[start][pos] = matrix[end - shift][start];
+
+      copyM[end - shift][start] = matrix[end][end - shift];
+
+      copyM[end][end - shift] = matrix[pos][end];
+
+      copyM[pos][end] = temp;
+    }
+  }
+
+  return matrix;
 }
 
 /**
@@ -475,8 +538,37 @@ function shuffleChar(str, iterations) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  let remaining = number;
+  let currentDigit = remaining % 10;
+  const digitsStack = [];
+
+  remaining = Math.floor(remaining / 10);
+  digitsStack.push(currentDigit);
+
+  while (remaining > 0 && remaining % 10 >= currentDigit) {
+    currentDigit = remaining % 10;
+    digitsStack.push(currentDigit);
+    remaining = Math.floor(remaining / 10);
+  }
+
+  const pivot = remaining % 10;
+  remaining = Math.floor(remaining / 10);
+
+  let swapIndex = 0;
+  while (swapIndex < digitsStack.length && pivot >= digitsStack[swapIndex]) {
+    swapIndex += 1;
+  }
+
+  const temp = digitsStack[swapIndex];
+  digitsStack[swapIndex] = pivot;
+  remaining = remaining * 10 + temp;
+
+  for (let idx = 0; idx < digitsStack.length; idx += 1) {
+    remaining = remaining * 10 + digitsStack[idx];
+  }
+
+  return remaining;
 }
 
 module.exports = {
